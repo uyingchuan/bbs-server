@@ -1,0 +1,14 @@
+logging:
+  level:
+    root: INFO
+    org.example.demo: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 30
+
+jwt:
+  secret: ${JWT_SECRET:dGhpc2lzYXNlY3JldGtleWZvcmp3dHRva2VuZ2VuZXJhdGlvbmFuZHZlcmlmaWNhdGlvbg==}
+  expiration: ${JWT_EXPIRATION:86400000}
