@@ -16,5 +16,13 @@ class User(
     var password: String,
     
     @Column(unique = true, nullable = false)
-    var email: String
+    var email: String,
+
+    /**
+     * owner: 作者
+     * admin: 管理员
+     * user: 用户
+     */
+    @Column(nullable = false)
+    var roles: String
 ) 
