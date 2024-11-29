@@ -1,27 +1,42 @@
 package org.example.demo.account.service
 
 import cn.dev33.satoken.stp.StpUtil
-import org.example.demo.account.dto.ChangePasswordRequest
-import org.example.demo.account.dto.LoginRequest
-import org.example.demo.account.dto.RegisterRequest
+import org.example.demo.account.dto.*
 import org.example.demo.common.dto.ResponseDto
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(private val userService: UserService) {
-    fun login(request: LoginRequest): ResponseDto<String> {
-        val user = userService.findByEmail(request.email) ?: throw IllegalArgumentException("邮箱未注册")
+    fun login(request: LoginRequest): ResponseDto<LoginResponse> {
+
+        val user = when {
+            request.account.contains("@") -> userService.findByEmail(request.account)
+            else -> userService.findByUsername(request.account)
+        } ?: throw IllegalArgumentException("账号不存在")
 
         if (!authenticate(request.password, user.password)) {
-            return ResponseDto.error(code = "100001", message = "邮箱或密码错误")
+            return ResponseDto.error(code = "100001", message = "账号或密码错误")
         }
 
         // 登录，生成token
         StpUtil.login(user.id)
 
-        // 返回token
-        return ResponseDto.success(StpUtil.getTokenValue())
+        // 返回
+        val userInfo = UserInfo(
+            email = user.email,
+            username = user.username,
+            avatar = user.avatar,
+            nickname = user.nickname,
+            description = user.description,
+            fansCount = user.fansCount,
+            followCount = user.followCount,
+        )
+        val response = LoginResponse(
+            token = StpUtil.getTokenValue(),
+            userInfo = userInfo
+        )
+        return ResponseDto.success(response)
     }
 
     fun register(request: RegisterRequest): ResponseDto<Unit> {

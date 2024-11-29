@@ -2,6 +2,7 @@ package org.example.demo.account.controller
 
 import org.example.demo.account.dto.ChangePasswordRequest
 import org.example.demo.account.dto.LoginRequest
+import org.example.demo.account.dto.LoginResponse
 import org.example.demo.account.dto.RegisterRequest
 import org.example.demo.account.service.AuthService
 import org.example.demo.common.dto.ResponseDto
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/auth")
 class AuthController(private val authService: AuthService) {
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: LoginRequest): ResponseDto<String> {
+    fun login(@RequestBody loginRequest: LoginRequest): ResponseDto<LoginResponse> {
         return authService.login(loginRequest)
     }
 

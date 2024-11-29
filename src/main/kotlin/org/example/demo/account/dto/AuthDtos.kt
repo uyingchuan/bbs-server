@@ -6,14 +6,25 @@ import jakarta.validation.constraints.Size
 
 data class LoginRequest(
     @field:NotBlank(message = "登录邮箱不能为空")
-    val email: String,
+    val account: String,
 
     @field:NotBlank(message = "密码不能为空")
     val password: String
 )
 
 data class LoginResponse(
-    val token: String
+    val token: String,
+    val userInfo: UserInfo
+)
+
+data class UserInfo(
+    val email: String,
+    val username: String,
+    val nickname: String,
+    val avatar: String?,
+    val description: String?,
+    val fansCount: Int,
+    val followCount: Int,
 )
 
 data class RegisterRequest(

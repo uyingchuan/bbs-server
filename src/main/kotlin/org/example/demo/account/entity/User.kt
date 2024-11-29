@@ -1,4 +1,4 @@
-package org.example.demo.entity
+package org.example.demo.account.entity
 
 import jakarta.persistence.*
 
@@ -8,13 +8,13 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-    
+
     @Column(unique = true, nullable = false)
     var username: String,
-    
+
     @Column(nullable = false)
     var password: String,
-    
+
     @Column(unique = true, nullable = false)
     var email: String,
 
@@ -24,5 +24,20 @@ class User(
      * user: 用户
      */
     @Column(nullable = false)
-    var roles: String
+    var roles: String,
+
+    @Column(nullable = false)
+    var avatar: String,
+
+    @Column(nullable = false)
+    var nickname: String,
+
+    @Column()
+    var description: String?,
+
+    @Column()
+    var fansCount: Int = 0,
+
+    @Column()
+    var followCount: Int = 0,
 ) 

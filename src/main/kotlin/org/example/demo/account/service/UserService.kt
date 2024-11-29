@@ -1,7 +1,7 @@
 package org.example.demo.account.service
 
-import org.example.demo.entity.User
-import org.example.demo.repository.UserRepository
+import org.example.demo.account.entity.User
+import org.example.demo.account.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -9,6 +9,14 @@ import org.springframework.transaction.annotation.Transactional
 class UserService(
     private val userRepository: UserRepository,
 ) {
+
+    fun findByUsername(username: String): User? {
+        return userRepository.findByUsername(username)
+    }
+
+    fun existsByUsername(username: String): Boolean {
+        return userRepository.existsByUsername(username)
+    }
 
     fun findByEmail(email: String): User? {
         return userRepository.findByEmail(email)
@@ -24,7 +32,10 @@ class UserService(
             username = username,
             password = password,
             email = email,
-            roles = "user"
+            avatar = "https://i2.hdslb.com/bfs/face/456751421fe6c1c12116503906e960892dd25d03.jpg",
+            nickname = generateRandomCode(),
+            roles = "user",
+            description = "(￢︿̫̿￢☆)"
         )
         return userRepository.save(user)
     }
@@ -43,4 +54,10 @@ class UserService(
         return emailRegex.matches(input)
     }
 
+    private fun generateRandomCode(length: Int = 8): String {
+        val characters = "-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
+        return (1..length)
+            .map { characters.random() }
+            .joinToString("")
+    }
 }
