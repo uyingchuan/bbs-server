@@ -32,6 +32,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("cn.dev33:sa-token-spring-boot3-starter:1.39.0")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("com.querydsl:querydsl-jpa:5.1.0")
 }
 
 kotlin {
