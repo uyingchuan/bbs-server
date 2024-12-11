@@ -1,26 +1,59 @@
 package org.levons.bbs.account.service
 
 import cn.dev33.satoken.stp.StpUtil
-import org.levons.bbs.account.dto.*
+import org.levons.bbs.account.dto.ChangePasswordRequest
+import org.levons.bbs.account.dto.LoginRequest
+import org.levons.bbs.account.dto.RegisterRequest
+import org.levons.bbs.account.vo.LoginResponse
+import org.levons.bbs.account.vo.UserInfo
 import org.levons.bbs.common.dto.ResponseDto
-import org.levons.bbs.common.exception.ServiceException
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(private val userService: UserService) {
     fun login(request: LoginRequest): ResponseDto<LoginResponse> {
-
         val user = when {
             request.account.contains("@") -> userService.findByEmail(request.account)
             else -> userService.findByUsername(request.account)
-        } ?: throw ServiceException("账号不存在")
+        } ?: return ResponseDto.error(code = "100002", message = "账号不存在")
 
         if (!authenticate(request.password, user.password)) {
             return ResponseDto.error(code = "100001", message = "账号或密码错误")
         }
 
-        // 登录，生成token
+        StpUtil.login(user.id)
+
+        val userInfo = UserInfo(
+            email = user.email,
+            username = user.username,
+            avatar = user.avatar,
+            nickname = user.nickname,
+            description = user.description,
+            fansCount = user.fansCount,
+            followCount = user.followCount,
+        )
+        val response = LoginResponse(
+            token = StpUtil.getTokenValue(),
+            userInfo = userInfo
+        )
+        return ResponseDto.success(response)
+    }
+
+    fun adminLogin(request: LoginRequest): ResponseDto<LoginResponse> {
+        val user = when {
+            request.account.contains("@") -> userService.findByEmail(request.account)
+            else -> userService.findByUsername(request.account)
+        } ?: return ResponseDto.error(code = "100002", message = "账号不存在")
+
+        if (!authenticate(request.password, user.password)) {
+            return ResponseDto.error(code = "100001", message = "账号或密码错误")
+        }
+
+        if (user.roles === "user") {
+            return ResponseDto.error(code = "100003", message = "仅管理员可登录")
+        }
+
         StpUtil.login(user.id)
 
         // 返回
